@@ -118,7 +118,14 @@ def add_data():
     Adds one or more students interactively with name validation (no numbers).
     """
     new_rows = []
-    n = int(input("How many students to add? "))
+    while True:
+        try:
+            n = int(input("How many students to add? "))
+            break
+        except ValueError:
+            print("Invalid Choice. Try Again.")
+
+
 
     for i in range(n):
         print(f"\n--- Student #{i+1} ---")
@@ -138,12 +145,19 @@ def add_data():
                     break
 
                 # Validate names & section
-                elif idx in [1, 2, 3]:
+                elif idx in [1, 2]:  # last_name, first_name
                     if val == "":
                         val = "none"
                     elif any(char.isdigit() for char in val):
-                        print("❌ Names and section cannot contain numbers. Try again.")
+                        print("❌ Names cannot contain numbers. Try again.")
                         continue
+                    student.append(val)
+                    break
+
+                # Section — allow letters and numbers
+                elif idx == 3:
+                    if val == "":
+                        val = "none"
                     student.append(val)
                     break
 

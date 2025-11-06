@@ -138,7 +138,6 @@ def add_data():
     Adds one or more students interactively with name validation (no numbers).
     """
     new_rows = []
-    # Ask how many students to add
     n = int(input("How many students to add? "))
 
     # Loop for each student
@@ -160,7 +159,7 @@ def add_data():
                     student.append(val)
                     break
 
-                 # Validate names (index 1, 2) - no numbers allowed
+                 # Validate names & section
                 elif idx in [1, 2]:  # last_name, first_name
                     if val == "":
                         val = "none"
@@ -277,8 +276,7 @@ def select_row(filename=FILENAME):
                 print(f"{h}: {v}")
             return
 
-    # If loop completes without finding student
-    print(" No student found with that ID.")
+    print("❌ No student found with that ID.")
 
 
 # ----------------------
@@ -289,80 +287,68 @@ def sort_data(filename=FILENAME):
     Sort student data by any column in ascending or descending order.
     Saves the sorted data back to the CSV file.
     """
-    # Read all valid rows
     valid_rows, _ = clean_ingest(filename)
     if not valid_rows:
-        print(" No valid data to sort.")
+        print("⚠️ No valid data to sort.")
         return
 
-    # Show available columns to sort by
-    print("\n Available columns to sort by:")
+    print("\n🔢 Available columns to sort by:")
     for i, col in enumerate(HEADER):
         print(f"{i+1}. {col}")
 
-    # Ask user which column to sort by
     col_name = input("\nEnter column name to sort by: ").strip()
     if col_name not in HEADER:
-        print(" Invalid column name.")
+        print("❌ Invalid column name.")
         return
 
-    # Get the column index (position in the row)
     col_index = HEADER.index(col_name)
 
-    # Ask for sort order (ascending or descending)
+    # Ask for sort order
     print("\nSort order:")
     print("1. Ascending (A→Z, 0→100)")
     print("2. Descending (Z→A, 100→0)")
     order = input("Enter choice (1 or 2): ").strip()
 
-    # Set reverse flag (True = descending, False = ascending)
     reverse = True if order == "2" else False
 
-    # Check if column contains numbers (indices 4-11) or text (0-3)
+    # Determine if column is numeric (indices 4-11) or text (0-3)
     is_numeric = col_index in range(4, 12)
 
-    # Define how to sort each row (the "key" function)
+    # Sort with proper handling of None values
     def sort_key(row):
         value = row[col_index]
         
         if is_numeric:
-            # For numeric columns, handle None values
-            # None becomes -infinity (appears first) when ascending
-            # None becomes +infinity (appears last) when descending
+            # For numeric columns, treat None as -infinity (so it appears first when ascending)
             if value is None:
                 return float('-inf') if not reverse else float('inf')
             return float(value)
         else:
-            # For text columns, convert to lowercase for consistent sorting
+            # For text columns, treat empty/none as empty string
             if value is None or str(value).lower() == "none":
                 return ""
             return str(value).lower()
 
     try:
-        # Sort the rows using the sort_key function
         sorted_rows = sorted(valid_rows, key=sort_key, reverse=reverse)
         
-        # Save sorted data back to CSV
+        # Save sorted data
         save_cleaned_csv(sorted_rows, filename)
         
-        print(f"\n Data sorted by '{col_name}' ({'descending' if reverse else 'ascending'})")
+        print(f"\n✅ Data sorted by '{col_name}' ({'descending' if reverse else 'ascending'})")
         
-        # Display first 10 rows as a preview
-        print(f"\n Preview (first 10 rows):")
+        # Display first 10 rows as preview
+        print(f"\n📋 Preview (first 10 rows):")
         print("-" * 100)
         print(f"{'ID':<12} {'Last Name':<15} {'First Name':<15} {'Section':<10} {col_name:<15}")
         print("-" * 100)
         
-        # Show first 10 rows
         for row in sorted_rows[:10]:
-            # Display "N/A" if value is None
             display_val = row[col_index] if row[col_index] is not None else "N/A"
-            # <12 means left-align in 12 character width
             print(f"{row[0]:<12} {row[1]:<15} {row[2]:<15} {row[3]:<10} {str(display_val):<15}")
         
-        # Show how many more rows there are
         if len(sorted_rows) > 10:
             print(f"\n... and {len(sorted_rows) - 10} more rows")
         
     except Exception as e:
-        print(f" Error during sorting: {e}")
+        print(f"❌ Error during sorting: {e}")

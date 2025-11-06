@@ -3,7 +3,6 @@ import os
 import statistics
 import weighted  # your existing weighted.py module
 import transform # select, project, sort, insert, delete
-
 # ----------------------
 # Configuration
 # ----------------------
@@ -56,10 +55,7 @@ def menu():
         # Option 1: Add new student records to the CSV file
         if choice == "1":
             transform.add_data()
-        
-        # Option 2: Read and display all valid rows from CSV
         elif choice == "2":
-            # clean_ingest() returns valid rows and invalid rows separately
             valid_rows, _ = transform.clean_ingest()
             if valid_rows:
                 print("\n📘 Valid rows:")
@@ -69,22 +65,13 @@ def menu():
         # Option 3: Remove a student record by their ID
         elif choice == "3":
             transform.delete_data()
-        
-        # Option 4: Display a specific column from the data
         elif choice == "4":
             transform.select_column()
-        
-        # Option 5: Display a specific student's complete record
         elif choice == "5":
             transform.select_row()
-        
-        # Option 6: Sort the student data by a chosen field
-        elif choice == "6":
+        elif choice == "6": # New call for sorting
             transform.sort_data()
-        
-        # Option 7: Analytics and reports submenu
-        elif choice == "7":
-            # Inner loop for analytics options
+        elif choice == "7": # Analytics (shifted)
             while True:
                 print("\n ANALYTICS MENU")
                 print("a. Compute Weighted Grades")
@@ -111,14 +98,10 @@ def menu():
                 elif sub == "f":
                     break  # Exit analytics menu, return to main menu
                 else:
-                    print(" Invalid choice. Try again.")
-        
-        # Option 8: Exit the program completely
-        elif choice == "8":
-            print(" Exiting program.")
-            break  # Exit the main loop, ending the program
-        
-        # Handle invalid menu choices
+                    print("❌ Invalid choice. Try again.")
+        elif choice == "8": # Exit (shifted)
+            print("👋 Exiting program.")
+            break
         else:
             print(" Invalid choice. Try again.")
 
